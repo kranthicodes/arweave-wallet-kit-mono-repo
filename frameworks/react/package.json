@@ -1,22 +1,8 @@
 {
   "name": "@arweave-wallet-kit/react",
+  "version": "0.3.0",
   "private": false,
-  "version": "0.0.1-beta.4",
   "type": "module",
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "fmt": "prettier . --write"
-  },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.es.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -24,8 +10,20 @@
       "require": "./dist/index.umd.js"
     }
   },
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "fmt": "prettier . --write"
+  },
   "dependencies": {
     "@callstack/react-theme-provider": "^3.0.8",
+    "@emotion/is-prop-valid": "^1.3.1",
     "@iconicicons/react": "^1.5.1",
     "@linaria/core": "^6.1.0",
     "@linaria/react": "^6.1.0",
@@ -58,10 +56,14 @@
     "vite-plugin-dts": "^1.7.1"
   },
   "peerDependencies": {
-    "@arweave-wallet-kit/core": ">= 0.0.1-beta.2 < 2",
-    "@arweave-wallet-kit/styles": ">= 0.0.1-beta.1 < 2",
+    "@arweave-wallet-kit/core": "workspace:*",
+    "@arweave-wallet-kit/styles": "workspace:*",
+    "@permaweb/aoconnect": "^0.0.65",
     "arweave": ">= 1.12.2 < 2",
-    "react": "^16.8.0 || 17.x || 18.x",
-    "react-dom": "^16.8.0 || 17.x || 18.x"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

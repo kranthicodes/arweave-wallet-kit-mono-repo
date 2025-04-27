@@ -14,8 +14,9 @@ import { Title } from "../components/Title";
 import useBalance from "../hooks/balance";
 import { styled } from "@linaria/react";
 import useModal from "../hooks/modal";
-import useAns from "../hooks/useAns";
-import { useEffect } from "react";
+import useNameService from "../hooks/useNameService";
+import { useEffect, useMemo } from "react";
+import { svgie } from "../lib/svgies";
 
 export function ProfileModal() {
   // modal controlls and statuses
@@ -38,8 +39,8 @@ export function ProfileModal() {
   // load balance
   const balance = useBalance();
 
-  // load ans profile
-  const ans = useAns();
+  // load name service profile
+  const nameServiceProfile = useNameService({ useAns: true, useArNS: true });
 
   // configured gateway
   const gateway = useGatewayURL();
@@ -50,14 +51,23 @@ export function ProfileModal() {
   // strategy
   const strategy = useActiveStrategy();
 
+  // svgie avatar
+  const svgieAvatar = useMemo(() => {
+    if (!state || !state.activeAddress) return "";
+
+    return svgie(state.activeAddress, { asDataURI: true });
+  }, [state, state.activeAddress]);
+
   return (
     <Modal {...modalController.bindings} onClose={onClose}>
       <Head onClose={onClose}>
         <StyledTitle>Profile</StyledTitle>
       </Head>
       <ProfileData>
-        <ProfilePicture profilePicture={ans?.avatar}>
-          {!ans?.avatar && <ProfileIcon />}
+        <ProfilePicture
+          profilePicture={nameServiceProfile?.logo || svgieAvatar}
+        >
+          {!nameServiceProfile?.logo && !svgieAvatar && <ProfileIcon />}
           <ActiveStrategy strategyTheme={strategy?.theme}>
             <img
               src={strategy?.logo ? `${gateway}/${strategy.logo}` : ""}
@@ -67,7 +77,8 @@ export function ProfileModal() {
           </ActiveStrategy>
         </ProfilePicture>
         <StyledTitle>
-          {ans?.currentLabel || formatAddress(state?.activeAddress || "", 8)}
+          {nameServiceProfile?.name ||
+            formatAddress(state?.activeAddress || "", 8)}
           <CopyIcon
             onClick={() =>
               navigator.clipboard.writeText(state.activeAddress || "")
@@ -90,10 +101,14 @@ export function ProfileModal() {
 const btnRadius: Record<Radius, number> = {
   default: 18,
   minimal: 10,
-  none: 0
+  none: 0,
 };
-const StyledTitle = styled(Title)``;
-const StyledParagraph = styled(Paragraph)``;
+const StyledTitle = withTheme(styled(Title)<{ theme: DefaultTheme }>`
+  color: rgb(${(props) => props.theme.primaryText});
+`);
+const StyledParagraph = withTheme(styled(Paragraph)<{ theme: DefaultTheme }>`
+  color: rgb(${(props) => props.theme.primaryText});
+`);
 
 const ProfileData = withTheme(styled.div<{ theme: DefaultTheme }>`
   display: flex;
@@ -135,7 +150,7 @@ const ProfileData = withTheme(styled.div<{ theme: DefaultTheme }>`
 const pfpRadius: Record<Radius, string> = {
   default: "100%",
   minimal: "8px",
-  none: "none"
+  none: "none",
 };
 
 const ProfilePicture = withTheme(styled.div<{
@@ -150,10 +165,8 @@ const ProfilePicture = withTheme(styled.div<{
   background-color: rgb(${(props) => props.theme.theme});
   background-size: cover;
   z-index: 1;
-  ${(props) =>
-    props.profilePicture
-      ? `background-image: url(${props.profilePicture});`
-      : ""}
+  background-image: ${(props) =>
+    props.profilePicture ? `url("${props.profilePicture}")` : "unset"};
 `);
 
 const ActiveStrategy = withTheme(styled.div<{
